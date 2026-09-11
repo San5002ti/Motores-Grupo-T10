@@ -16,20 +16,29 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform cameraTransform;
 
     private CharacterController controller;
-
     private Vector2 moveInput;
     private float verticalVelocity;
 
+    private void Start()
+    {
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
+    }
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
 
         if (cameraTransform == null)
         {
-            Camera mainCamera = Camera.main;
-
-            if (mainCamera != null)
-                cameraTransform = mainCamera.transform;
+            Camera mainCam = Camera.main;
+            if (mainCam != null)
+            {
+                cameraTransform = mainCam.transform;
+            }
+            else
+            {
+                Debug.LogError("[PlayerMovement] No se encontró ninguna cámara con el Tag 'MainCamera'. Asigna una manualmente en el Inspector.");
+            }
         }
     }
 
@@ -42,36 +51,31 @@ public class PlayerMovement : MonoBehaviour
     private void Move()
     {
         if (cameraTransform == null)
+        {
+            // Si la cámara es nula, no se mueve
             return;
+        }
 
-        // Movimiento recibido del teclado
+        // Vectores de dirección planos respecto a la cámara
         Vector3 forward = cameraTransform.forward;
         Vector3 right = cameraTransform.right;
 
-        // Evitamos que mirar hacia arriba/abajo afecte al movimiento
         forward.y = 0f;
         right.y = 0f;
 
         forward.Normalize();
         right.Normalize();
 
-        // Movimiento relativo a la cámara
-        Vector3 moveDirection =
-            forward * moveInput.y +
-            right * moveInput.x;
-
-        // Evita que el personaje vaya más rápido en diagonal
+        Vector3 moveDirection = (forward * moveInput.y) + (right * moveInput.x);
         moveDirection = Vector3.ClampMagnitude(moveDirection, 1f);
 
         // Movimiento horizontal
         controller.Move(moveDirection * moveSpeed * Time.deltaTime);
 
-        // Rotación del personaje
+        // Rotación del personaje hacia donde camina o hacia donde mira
         if (moveDirection != Vector3.zero)
         {
-            Quaternion targetRotation =
-                Quaternion.LookRotation(moveDirection);
-
+            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
                 targetRotation,
@@ -87,25 +91,29 @@ public class PlayerMovement : MonoBehaviour
             verticalVelocity = -2f;
         }
 
-        // Salto
         if (controller.isGrounded &&
             Keyboard.current != null &&
             Keyboard.current.spaceKey.wasPressedThisFrame)
         {
-            verticalVelocity =
-                Mathf.Sqrt(jumpHeight * -2f * gravity);
+            verticalVelocity = Mathf.Sqrt(jumpHeight * -2f * gravity);
         }
 
         verticalVelocity += gravity * Time.deltaTime;
 
-        controller.Move(
-            Vector3.up * verticalVelocity * Time.deltaTime
-        );
+        controller.Move(Vector3.up * verticalVelocity * Time.deltaTime);
     }
 
-    // New Input System
+    // Compatible con Player Input en modo "Send Messages"
+    public void OnMove(InputValue value)
+    {
+        moveInput = value.Get<Vector2>();
+        Debug.Log("[PlayerMovement] Recibiendo input (Send Messages): " + moveInput);
+    }
+
+    // Compatible con Player Input en modo "Invoke Unity Events" o llamadas directas
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
+        Debug.Log("[PlayerMovement] Recibiendo input (CallbackContext): " + moveInput);
     }
 }
