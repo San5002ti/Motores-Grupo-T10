@@ -16,7 +16,6 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform cameraTransform;
 
     private CharacterController controller;
-
     private Vector2 moveInput;
     private float verticalVelocity;
 
@@ -44,29 +43,25 @@ public class PlayerMovement : MonoBehaviour
         if (cameraTransform == null)
             return;
 
-        // Movimiento recibido del teclado
         Vector3 forward = cameraTransform.forward;
         Vector3 right = cameraTransform.right;
 
-        // Evitamos que mirar hacia arriba/abajo afecte al movimiento
         forward.y = 0f;
         right.y = 0f;
 
         forward.Normalize();
         right.Normalize();
 
-        // Movimiento relativo a la cámara
         Vector3 moveDirection =
             forward * moveInput.y +
             right * moveInput.x;
 
-        // Evita que el personaje vaya más rápido en diagonal
         moveDirection = Vector3.ClampMagnitude(moveDirection, 1f);
 
-        // Movimiento horizontal
-        controller.Move(moveDirection * moveSpeed * Time.deltaTime);
+        controller.Move(
+            moveDirection * moveSpeed * Time.deltaTime
+        );
 
-        // Rotación del personaje
         if (moveDirection != Vector3.zero)
         {
             Quaternion targetRotation =
@@ -87,7 +82,6 @@ public class PlayerMovement : MonoBehaviour
             verticalVelocity = -2f;
         }
 
-        // Salto
         if (controller.isGrounded &&
             Keyboard.current != null &&
             Keyboard.current.spaceKey.wasPressedThisFrame)
@@ -103,9 +97,11 @@ public class PlayerMovement : MonoBehaviour
         );
     }
 
-    // New Input System
-    public void OnMove(InputAction.CallbackContext context)
+    // IMPORTANTE: Player Input busca este método
+    public void OnMove(InputValue value)
     {
-        moveInput = context.ReadValue<Vector2>();
+        moveInput = value.Get<Vector2>();
+
+        Debug.Log("Movimiento detectado: " + moveInput);
     }
 }
