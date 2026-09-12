@@ -51,12 +51,9 @@ public class PlayerMovement : MonoBehaviour
     private void Move()
     {
         if (cameraTransform == null)
-        {
-            // Si la cámara es nula, no se mueve
             return;
-        }
 
-        // Vectores de dirección planos respecto a la cámara
+        // Dirección frontal y lateral de la cámara proyectadas en el suelo (plano horizontal)
         Vector3 forward = cameraTransform.forward;
         Vector3 right = cameraTransform.right;
 
@@ -66,16 +63,17 @@ public class PlayerMovement : MonoBehaviour
         forward.Normalize();
         right.Normalize();
 
+        // W/S mueve adelante/atrás, A/D mueve izquierda/derecha
         Vector3 moveDirection = (forward * moveInput.y) + (right * moveInput.x);
         moveDirection = Vector3.ClampMagnitude(moveDirection, 1f);
 
-        // Movimiento horizontal
+        // Desplazamiento
         controller.Move(moveDirection * moveSpeed * Time.deltaTime);
 
-        // Rotación del personaje hacia donde camina o hacia donde mira
-        if (moveDirection != Vector3.zero)
+        // El cuerpo siempre mira hacia el frente de la cámara, sin importar la tecla presionada
+        if (forward != Vector3.zero)
         {
-            Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
+            Quaternion targetRotation = Quaternion.LookRotation(forward);
             transform.rotation = Quaternion.Slerp(
                 transform.rotation,
                 targetRotation,
@@ -114,6 +112,5 @@ public class PlayerMovement : MonoBehaviour
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
-        Debug.Log("[PlayerMovement] Recibiendo input (CallbackContext): " + moveInput);
     }
 }
