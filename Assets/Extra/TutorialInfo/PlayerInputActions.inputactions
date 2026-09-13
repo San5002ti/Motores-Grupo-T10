@@ -31,7 +31,7 @@
                 {
                     "name": "up",
                     "id": "86a52af7-6499-408b-84ad-2305d2e0ca90",
-                    "path": "w",
+                    "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -42,7 +42,7 @@
                 {
                     "name": "down",
                     "id": "988123e6-88b5-461c-9546-c6db81659ece",
-                    "path": "s",
+                    "path": "<Keyboard>/s",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -53,7 +53,7 @@
                 {
                     "name": "left",
                     "id": "95e12c9b-feb5-47d5-9517-706b66d3a422",
-                    "path": "a",
+                    "path": "<Keyboard>/a",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
@@ -64,7 +64,7 @@
                 {
                     "name": "right",
                     "id": "7b1b4a58-6947-406a-ad11-a1d710dc8a03",
-                    "path": "d",
+                    "path": "<Keyboard>/d",
                     "interactions": "",
                     "processors": "",
                     "groups": "",
