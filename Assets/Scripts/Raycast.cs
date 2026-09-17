@@ -29,11 +29,23 @@ public class Raycast : MonoBehaviour
 
         if (Physics.Raycast(origen, direccion, out hit, distanciaMaxima))
         {
-            if (hit.collider.CompareTag("objetivo"))
+            // Verificamos si se presionó la E este frame
+            if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
             {
-                if (Keyboard.current != null && Keyboard.current.eKey.wasPressedThisFrame)
+                // LÓGICA 1: Si es el objetivo de victoria
+                if (hit.collider.CompareTag("objetivo"))
                 {
                     MostrarVictoria();
+                }
+
+                // LÓGICA 2: Verificamos si el objeto chocado tiene el script de rotación
+                // Usamos GetComponent para buscar el script en el objeto golpeado
+                InteractionRotacion objetoRotatorio = hit.collider.GetComponent<InteractionRotacion>();
+
+                // Si el objeto tiene el script adjunto, llamamos a la función
+                if (objetoRotatorio != null)
+                {
+                    objetoRotatorio.ActivarRotacion();
                 }
             }
         }
@@ -44,13 +56,19 @@ public class Raycast : MonoBehaviour
         if (ventanaVictoria != null)
         {
             ventanaVictoria.SetActive(true);
-
-            // Desbloquea y hace visible el cursor:
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
-
-            // Opcional: Detener el tiempo del juego para que no sigan moviéndose
-            // Time.timeScale = 0f;
         }
+    }
+
+    public void AceptarVictoria()
+    {
+        if (ventanaVictoria != null)
+        {
+            ventanaVictoria.SetActive(false);
+        }
+
+        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.visible = false;
     }
 }
