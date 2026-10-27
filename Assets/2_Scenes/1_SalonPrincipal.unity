@@ -17248,6 +17248,8 @@ MonoBehaviour:
       Input:
         InputAction: {fileID: 1974373766}
         Gain: 1
+        LegacyInput: 
+        LegacyGain: 1
         CancelDeltaTime: 0
       InputValue: 0
       Driver:
@@ -17259,6 +17261,8 @@ MonoBehaviour:
       Input:
         InputAction: {fileID: 726152729}
         Gain: 1
+        LegacyInput: 
+        LegacyGain: 1
         CancelDeltaTime: 0
       InputValue: 0
       Driver:
@@ -17270,6 +17274,8 @@ MonoBehaviour:
       Input:
         InputAction: {fileID: 0}
         Gain: 1
+        LegacyInput: 
+        LegacyGain: 1
         CancelDeltaTime: 0
       InputValue: 0
       Driver:
