@@ -49,6 +49,20 @@ public class Raycast : MonoBehaviour
                 }
             }
         }
+        if (hit.collider != null)
+        {
+            // Verificamos si el objeto impactado tiene nuestro script
+            SecuenciaInteractiva secuencia = hit.collider.GetComponent<SecuenciaInteractiva>();
+
+            if (secuencia != null)
+            {
+                // Si el usuario presiona la tecla E mientras está en contacto
+                if (Input.GetKeyDown(KeyCode.E))
+                {
+                    secuencia.Interactuar(); // Inicia toda la secuencia
+                }
+            }
+        }
     }
 
     void MostrarVictoria()

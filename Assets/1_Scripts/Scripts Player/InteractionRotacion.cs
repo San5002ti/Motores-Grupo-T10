@@ -13,6 +13,12 @@ public class InteractionRotacion : MonoBehaviour
     [Tooltip("Cuánto tiempo se queda quieto antes de volver")]
     public float tiempoDeEspera = 2.0f;
 
+    [Header("Configuración de Audio")]
+    [Tooltip("AudioSource que reproducirá el sonido. Si se deja vacío, se buscará automáticamente en este GameObject.")]
+    public AudioSource audioSource;
+    [Tooltip("Efecto de sonido que se reproducirá al iniciar la interacción.")]
+    public AudioClip sonidoInteraccion;
+
     private Quaternion rotacionOriginalObjeto;
     private bool estaInteractuando = false;
 
@@ -24,6 +30,12 @@ public class InteractionRotacion : MonoBehaviour
         }
 
         rotacionOriginalObjeto = objetoRotatorio.rotation;
+
+        // Si no asignaste un AudioSource en el Inspector, intentamos obtenerlo del GameObject
+        if (audioSource == null)
+        {
+            audioSource = GetComponent<AudioSource>();
+        }
     }
 
     public void ActivarRotacion()
@@ -38,6 +50,12 @@ public class InteractionRotacion : MonoBehaviour
     {
         estaInteractuando = true;
 
+        // --- PASO 0: Reproducir el efecto de sonido ---
+        if (audioSource != null && sonidoInteraccion != null)
+        {
+            audioSource.PlayOneShot(sonidoInteraccion);
+        }
+
         // --- PASO 1: Calcular cuál será la rotación final ---
         Quaternion rotacionInicial = objetoRotatorio.rotation;
         Quaternion rotacionDestino = rotacionInicial * Quaternion.Euler(gradosDeRotacion);
@@ -45,27 +63,20 @@ public class InteractionRotacion : MonoBehaviour
         float tiempoTranscurrido = 0f;
 
         // --- PASO 2: Rotar suavemente hacia el destino ---
-        // Mientras el tiempo transcurrido sea menor a la duración que configuramos...
         while (tiempoTranscurrido < duracionRotacion)
         {
-            // Slerp mezcla suavemente entre la rotación inicial y la final basado en el tiempo
             objetoRotatorio.rotation = Quaternion.Slerp(rotacionInicial, rotacionDestino, tiempoTranscurrido / duracionRotacion);
-
-            // Sumamos el tiempo que tardó este frame
             tiempoTranscurrido += Time.deltaTime;
-
-            // Esperamos al siguiente frame para continuar el bucle
             yield return null;
         }
 
-        // Aseguramos que quede exactamente en la rotación de destino al terminar el bucle
         objetoRotatorio.rotation = rotacionDestino;
 
         // --- PASO 3: Esperar el tiempo definido en su nueva posición ---
         yield return new WaitForSeconds(tiempoDeEspera);
 
         // --- PASO 4: Volver a la rotación original suavemente ---
-        tiempoTranscurrido = 0f; // Reiniciamos el contador de tiempo
+        tiempoTranscurrido = 0f;
 
         while (tiempoTranscurrido < duracionRotacion)
         {
@@ -74,7 +85,6 @@ public class InteractionRotacion : MonoBehaviour
             yield return null;
         }
 
-        // Aseguramos que quede exactamente en la rotación original
         objetoRotatorio.rotation = rotacionOriginalObjeto;
 
         // Liberamos el estado para permitir volver a interactuar
