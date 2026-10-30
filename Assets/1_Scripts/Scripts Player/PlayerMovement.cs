@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 
 [RequireComponent(typeof(CharacterController))]
+[RequireComponent(typeof(Animator))]
 public class PlayerMovement : MonoBehaviour
 {
     [Header("Movimiento")]
@@ -16,6 +17,7 @@ public class PlayerMovement : MonoBehaviour
     [SerializeField] private Transform cameraTransform;
 
     private CharacterController controller;
+    private Animator animator;
     private Vector2 moveInput;
     private float verticalVelocity;
 
@@ -24,9 +26,11 @@ public class PlayerMovement : MonoBehaviour
         Cursor.lockState = CursorLockMode.Locked;
         Cursor.visible = false;
     }
+
     private void Awake()
     {
         controller = GetComponent<CharacterController>();
+        animator = GetComponent<Animator>();
 
         if (cameraTransform == null)
         {
@@ -52,7 +56,6 @@ public class PlayerMovement : MonoBehaviour
     {
         if (cameraTransform == null)
         {
-            // Si la cámara es nula, no se mueve
             return;
         }
 
@@ -72,7 +75,7 @@ public class PlayerMovement : MonoBehaviour
         // Movimiento horizontal
         controller.Move(moveDirection * moveSpeed * Time.deltaTime);
 
-        // Rotación del personaje hacia donde camina o hacia donde mira
+        // Rotación del personaje hacia donde camina
         if (moveDirection != Vector3.zero)
         {
             Quaternion targetRotation = Quaternion.LookRotation(moveDirection);
@@ -81,6 +84,15 @@ public class PlayerMovement : MonoBehaviour
                 targetRotation,
                 rotationSpeed * Time.deltaTime
             );
+        }
+
+        // --- ACTUALIZAR EL ANIMATOR ---
+        // Calcula la magnitud del input (0 cuando está quieto, > 0 cuando se mueve)
+        float currentSpeed = moveInput.sqrMagnitude;
+
+        if (animator != null)
+        {
+            animator.SetFloat("speed", currentSpeed);
         }
     }
 
@@ -107,13 +119,11 @@ public class PlayerMovement : MonoBehaviour
     public void OnMove(InputValue value)
     {
         moveInput = value.Get<Vector2>();
-        Debug.Log("[PlayerMovement] Recibiendo input (Send Messages): " + moveInput);
     }
 
     // Compatible con Player Input en modo "Invoke Unity Events" o llamadas directas
     public void OnMove(InputAction.CallbackContext context)
     {
         moveInput = context.ReadValue<Vector2>();
-        Debug.Log("[PlayerMovement] Recibiendo input (CallbackContext): " + moveInput);
     }
 }
