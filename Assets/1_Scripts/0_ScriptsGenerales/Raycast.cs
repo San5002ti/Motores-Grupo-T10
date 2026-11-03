@@ -14,9 +14,6 @@ public class Raycast : MonoBehaviour
             ventanaVictoria.SetActive(false);
         }
 
-        // Opcional: Bloquea y oculta el cursor al iniciar el juego
-        Cursor.lockState = CursorLockMode.Locked;
-        Cursor.visible = false;
     }
 
     void Update()

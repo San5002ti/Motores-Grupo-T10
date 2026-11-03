@@ -4,17 +4,20 @@ using UnityEngine.InputSystem;
 
 public class Apagarmaus : MonoBehaviour
 {
+    
     private bool maus_activo = false;
     private float tiempo = 0f;
+    
     [Header("Tiempo de espera entre cambio")]
     public float retraso = 0f;
     void Start()
     {
         Cursor.visible = false;
-        Cursor.lockState = CursorLockMode.Locked;
+        Cursor.lockState = CursorLockMode.Locked;  
     }
     void Update()
     {
+        
         tiempo += Time.deltaTime;
         if (Input.GetKeyDown(KeyCode.Space) && tiempo > retraso)
         {
@@ -33,6 +36,7 @@ public class Apagarmaus : MonoBehaviour
                 }
                 tiempo = 0;
         }
+        
 
     }
 }
