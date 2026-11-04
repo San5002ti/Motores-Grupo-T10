@@ -1,8 +1,9 @@
 using UnityEngine;
 using System.Collections;
+using Interact;
 
-public class InteractionRotacion : MonoBehaviour
-{
+public class InteractionRotacion : MonoBehaviour, IinteractuarDEnpc
+{ 
     [Header("Configuración del Objeto que Rota")]
     public Transform objetoRotatorio;
     public Vector3 gradosDeRotacion = new Vector3(0, 90, 0);
@@ -38,6 +39,10 @@ public class InteractionRotacion : MonoBehaviour
         }
     }
 
+    public void interactuarNPC() 
+    {
+        StartCoroutine(SecuenciaDeRotacionSuave());
+    }
     public void ActivarRotacion()
     {
         if (!estaInteractuando)
