@@ -66,6 +66,10 @@ public class HUDTiempo : MonoBehaviour
                 TerminarJuego();
             }
         }
+        if (tiempoRestante <= 0)
+        {
+            SceneManager.LoadScene(3);
+        }
     }
 
     void ActualizarTextoHUD()

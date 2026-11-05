@@ -9,6 +9,8 @@ TagManager:
   - objetivo
   - Interactuar
   - MiniMapa
+  - Npc
+  - Paredes
   layers:
   - Default
   - TransparentFX
@@ -17,7 +19,7 @@ TagManager:
   - Water
   - UI
   - MiniMapa
-  - 
+  - Paredes
   - 
   - 
   - 

@@ -1,5 +1,7 @@
 using UnityEngine;
 using TMPro;
+using UnityEngine.SceneManagement;
+
 public class ControladorMonedas : MonoBehaviour
 {
     public static ControladorMonedas Instancia { get; private set; }
@@ -8,6 +10,8 @@ public class ControladorMonedas : MonoBehaviour
     public TextMeshProUGUI textoMonedas;
     [Header("Dato")]
     public int totalMonedas = 0;
+    public int monedasParaCambiarEscena = 10;   
+
     private void Awake()
     {
         if (Instancia == null)
@@ -27,6 +31,12 @@ public class ControladorMonedas : MonoBehaviour
     {
         totalMonedas += cantidad;
         ActualizarUI();
+        if (totalMonedas >= monedasParaCambiarEscena)
+        {
+
+                SceneManager.LoadScene(2);
+            
+        }
     }
     private void ActualizarUI()
     {

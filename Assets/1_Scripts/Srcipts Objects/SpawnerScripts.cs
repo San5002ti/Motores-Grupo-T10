@@ -3,16 +3,12 @@ using UnityEngine;
 
 public class SpawnerObjetos : MonoBehaviour
 {
-    [Header("ponga aqui los objetos que intanciara")]
-    public GameObject prefabAInstanciar;
-    public Transform[] puntosDeSpawn; 
-
-    [Header("tipo entre apariciones")]
+    public GameObject[] prefabsAInstanciar;
+    public Transform[] puntosDeSpawn;
     public float tiempoEntreSpawns = 3f;
     public int limiteMaximo = 10;
-
-    [Tooltip("detiene  generacion")]
     public bool limiteEsTotalHistorico = true;
+    public string tagParaContar = "Npc";
 
     private int contadorTotalGenerado = 0;
 
@@ -20,6 +16,7 @@ public class SpawnerObjetos : MonoBehaviour
     {
         StartCoroutine(RutinaSpawn());
     }
+
     private IEnumerator RutinaSpawn()
     {
         while (true)
@@ -32,9 +29,10 @@ public class SpawnerObjetos : MonoBehaviour
             }
         }
     }
+
     private bool PuedeGenerar()
     {
-        if (prefabAInstanciar == null) return false;
+        if (prefabsAInstanciar == null || prefabsAInstanciar.Length == 0) return false;
 
         if (limiteEsTotalHistorico)
         {
@@ -42,21 +40,30 @@ public class SpawnerObjetos : MonoBehaviour
         }
         else
         {
-            int objetosActivos = GameObject.FindGameObjectsWithTag(prefabAInstanciar.tag).Length;
+            int objetosActivos = GameObject.FindGameObjectsWithTag(tagParaContar).Length;
             return objetosActivos < limiteMaximo;
         }
     }
+
     private void InstanciarObjeto()
     {
+        int indicePrefabAleatorio = Random.Range(0, prefabsAInstanciar.Length);
+        GameObject prefabElegido = prefabsAInstanciar[indicePrefabAleatorio];
+
+        if (prefabElegido == null) return;
         Vector3 posicion = transform.position;
         Quaternion rotacion = transform.rotation;
+
         if (puntosDeSpawn != null && puntosDeSpawn.Length > 0)
         {
-            int indiceAleatorio = Random.Range(0, puntosDeSpawn.Length);
-            posicion = puntosDeSpawn[indiceAleatorio].position;
-            rotacion = puntosDeSpawn[indiceAleatorio].rotation;
+            int indicePuntoAleatorio = Random.Range(0, puntosDeSpawn.Length);
+            if (puntosDeSpawn[indicePuntoAleatorio] != null)
+            {
+                posicion = puntosDeSpawn[indicePuntoAleatorio].position;
+                rotacion = puntosDeSpawn[indicePuntoAleatorio].rotation;
+            }
         }
-        Instantiate(prefabAInstanciar, posicion, rotacion);
+        Instantiate(prefabElegido, posicion, rotacion);
         contadorTotalGenerado++;
     }
 }
