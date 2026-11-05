@@ -35,4 +35,9 @@ public class ControladorMonedas : MonoBehaviour
             textoMonedas.text = ":" + totalMonedas.ToString();
         }
     }
+    public void RestarMoneda(int cantidad = 1)
+    {
+        totalMonedas -= cantidad;
+        ActualizarUI();
+    }
 }
